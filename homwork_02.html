@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <!-- Webpage Title -->
+        <title>나홀로 쇼핑몰</title>
+
+        <!-- Required meta tags -->
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+        <!-- Bootstrap CSS -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+              integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+              crossorigin="anonymous">
+
+        <!-- JS -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+                integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+                crossorigin="anonymous"></script>
+
+        <!-- 구글폰트 -->
+        <link href="https://fonts.googleapis.com/css?family=Stylish&display=swap" rel="stylesheet">
+
+        <style type="text/css">
+            * {
+                font-family: 'Stylish', sans-serif;
+            }
+
+            .wrap {
+                width: 500px;
+                margin: auto;
+                margin-top: 20px;
+            }
+
+            .img {
+                background-image: url('https://i.imgur.com/HdfOoJs.jpg');
+                background-size: contain;
+                background-position: center;
+                width: 500px;
+                height: 300px;
+                border: 1px solid gainsboro;
+                border-radius: 5px;
+                box-shadow: 0 0 5px silver;
+            }
+
+            .info {
+                margin-top: 20px;
+                margin-bottom: 20px;
+            }
+
+            h1, h5 {
+                display: inline;
+            }
+
+            .order {
+                width: 76px;
+                margin: 0 auto;
+            }
+            .exchange-info {
+                color: blue;
+            }
+        </style>
+
+        <script>
+            $(document).ready(function () {
+                showExchange();
+            });
+
+            function showExchange () {
+                //ajax 실행
+                 $.ajax({
+                    type: "GET",
+                    url: "https://api.manana.kr/exchange/rate.json",
+                    data: {},
+                    success: function (response) {
+                        let rate = 0;
+                        for (let i = 0; i < response.length; i++) {
+                            if (response[i]['name'] == 'USDKRW=X') {
+                                // .text() 사용 = 내용을 변경하거나 가져오는 함수 추가로 append 하지 않아도 됨
+                                $('#exchange').text(response[i]['rate']);
+                                return ;
+                            }
+                        }
+                    }
+                })
+            };
+
+
+
+
+            /* 폰번호 정규 표현식 */
+            function phoneNum(num) {
+                var regPhone = /(01[0|1|6|9|7])[-](\d{3}|\d{4})[-](\d{4}$)/g;
+                if (!regPhone.test(num)) {
+                    return false;
+                }
+            }
+
+
+            function order() {
+                // 각 ID 별 현재값 확인
+                let orderName = $('#order-name').val();
+                let orderCount = $('#order-count').val();
+                let orderAddress = $('#order-address').val();
+                let orderPhone = $('#order-phone').val();
+                // 각 ID 의 값이 빈값일 때 alert 띄우기
+                if (orderName == '') {
+                    alert('주문자를 입력하세요');
+                    return;
+                } else if (orderCount == '') {
+                    alert('수량을 입력하세요');
+                    return;
+                } else if (orderAddress == '') {
+                    alert('주소를 입력하세요');
+                    return;
+                } else if (orderPhone == '') {
+                    alert('전화번호를 입력하세요');
+                    return;
+                } else if (orderPhone != '') {
+                    // 휴대폰 정규표현식 호출
+                    if (phoneNum(orderPhone) == false) {
+                        alert('전화번호 형식과 맞지 않습니다 \r\n 000-0000-0000 형식으로 다시 한번 확인하세요');
+                        return;
+                    }
+                }
+            }
+        </script>
+
+    </head>
+    <body>
+        <div class="wrap">
+            <div class="img"></div>
+            <div class="info">
+                <h1>두카티 스크램블러 </h1>
+                <h5>가격: 250,00000원/대</h5>
+                <p>두카티스크램블러는 모터사이클의 본질이며 자유, 즐거움과 자기 표현으로 가득 찬 세상입니다. 당신의 자유를 가져보세요.</p>
+                <div class="exchange-info">
+                    "달러-원 환율: "
+                    <span id = "exchange"></span>
+                </div>
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">주문자 이름</span>
+                    </div>
+                    <input type="text" class="form-control" id="order-name">
+                </div>
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <label class="input-group-text">수량</label>
+                    </div>
+                    <select class="custom-select" id="order-count">
+                        <option selected value=""> -- 수량을 선택하세요 --</option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                    </select>
+                </div>
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">주소</span>
+                    </div>
+                    <input type="text" class="form-control" id="order-address">
+                </div>
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">전화번호</span>
+                    </div>
+                    <input type="text" class="form-control" id="order-phone">
+                </div>
+                <div class="order">
+                    <button onclick="order()" type="button" class="btn btn-primary">주문하기</button>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
